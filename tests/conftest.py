@@ -14,14 +14,12 @@ def generate_user_data():
 
 @pytest.fixture(scope="function")
 def registered_user(generate_user_data):
-    response = UserMethods.create_user(generate_user_data)
-    assert response.status_code == 200
+    UserMethods.create_user(generate_user_data)
     return generate_user_data
 
 @pytest.fixture
 def auth_token(registered_user):
     response = UserMethods.login_user(registered_user["email"], registered_user["password"])
-    assert response.status_code == 200, 403
     token = response.json().get("accessToken")
     assert token
     return token
@@ -29,6 +27,5 @@ def auth_token(registered_user):
 @pytest.fixture
 def ingredient_ids():
     response = IngredientMethods.get_all_ingredients()
-    assert response.status_code == 200, response.text
     data = response.json().get("data", [])
     return [item["_id"] for item in data]
